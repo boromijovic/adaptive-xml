@@ -5,6 +5,7 @@
 
 import * as monacoImport from 'monaco-editor/esm/vs/editor/editor.api';
 export class AdaptiveProvider {
+  public static card='';
   public static schemaNode() {
     const adaptiveSchema = `<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="Card" type="AdaptiveCard" />
@@ -390,21 +391,81 @@ export class AdaptiveProvider {
     // return the elements we found
     return availableItems;
   }
-  static generateInsertText(elemName: string, wrappedTag: boolean, hasElements: boolean) {
-    let defaultAttributes = 'Id="' + AdaptiveProvider.generateId(elemName) + '" ';
+  static generateInsertText(elemName: string, wrappedTag: boolean, hasElements: boolean) {;
+    
+    let defaultAttributes = ' Id="' + AdaptiveProvider.generateId(elemName) + '"';
+
+    let childrenOfElement =''
     switch (elemName) {
       case 'TextBlock':
-        defaultAttributes += " Text=\"New TextBloc\" Wrap=\"true\" ";
+        defaultAttributes += " Text=\"New TextBlock\" Wrap=\"true\"";
+        break;
+      case 'Input.Text':
+        defaultAttributes += " Placeholder=\"Placeholder text\"";
+        break;
+      case 'Image':
+        defaultAttributes += " Url=\"Image Url\" AltText=\"Image\"";
+        break;
+      case 'Column':
+        defaultAttributes += " Width=\"strech\"";
+        break;
+
+      case 'FactSet':
+        childrenOfElement = `  <Fact Title="Fact 1" Value="Value 1"/>
+  <Fact Title="Fact 2" Value="Value 2"/>
+`;
+        break;
+
+      case 'ColumnSet':
+        const search='<Column ';
+        const count = this.occurrences(this.card,search) + 1;
+        childrenOfElement = `  <Column Id="${AdaptiveProvider.generateId(elemName)}"  Width="strech">
+  </Column>
+`;
         break;
 
       default:
         break;
     }
-    return (wrappedTag ? '' : '\n<') + elemName + defaultAttributes + (hasElements ? '>\n</' + elemName + (wrappedTag ? '' : '>') : '/' + (wrappedTag ? '' : '>'));
+    return ('<') + elemName + defaultAttributes + (hasElements ? '>\n' + childrenOfElement + '</' + elemName + (wrappedTag ? '' : '>') : '/' + (wrappedTag ? '' : '>'));
   }
+
+  static occurrences(string, subString) {
+    if (subString.length <= 0) {
+      return 0;
+    }
+
+    let n = 0
+    let pos = 0
+    const step = subString.length;
+
+    while (true) {
+        pos = string.indexOf(subString, pos);
+        if (pos >= 0) {
+            n++;
+            pos += step;
+        } else break;
+    }
+    return n;
+  }
+
   static generateId(elemName: string) {
-    return elemName + '1';
+    const search = '<' + elemName + ' ';
+    const count = this.occurrences(this.card,search) + 1;
+
+    let lowerVariableKey = elemName.charAt(0).toLowerCase() + elemName.slice(1);
+
+    let randomChar = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let counter = 0;
+    while (counter < 2) {
+      randomChar += characters.charAt(Math.floor(Math.random() * characters.length));
+      counter ++;
+    }
+
+    return lowerVariableKey + '-' + count + randomChar;
   }
+
   public static getElementAvailableAttributes(monaco, schemaElements, element: any, usedChildTags) {
     const availableItems = [];
     const complexType = AdaptiveProvider.findComplexType(schemaElements, element.getAttribute('type'));

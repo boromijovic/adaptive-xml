@@ -147,6 +147,8 @@ export class AppComponent implements OnInit {
 
         this.updateCard(this.cardDefinition);
       });
+
+      AdaptiveProvider.card = monacoValue;
     });
 
     dataEditor.getModel().onDidChangeContent((event) => {
@@ -157,6 +159,8 @@ export class AppComponent implements OnInit {
       this.cardData = JSON.parse(dataEditor.getModel().getValue());
 
       this.updateCard(this.cardDefinition);
+
+      AdaptiveProvider.card = dataEditor.getModel().getValue();
     });
   }
 
