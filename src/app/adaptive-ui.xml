@@ -1,6 +1,6 @@
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="Card" type="AdaptiveCard" />
-  <xs:element name="TextBlock" type="TextBlock"/>
+  <xs:element name="TextBlock" type="TextBlock" />
   <xs:element name="Image" type="Image" />
   <xs:element name="Container" type="Container" />
   <xs:element name="ColumnSet" type="ColumnSet" />
@@ -38,13 +38,6 @@
         <xs:attribute name="BackgroundImage" type="xs:string" use="optional" />
         <xs:attribute name="FallbackText" type="xs:string" use="optional" />
         <xs:attribute name="Version" type="xs:string" use="optional" />
-        <xs:attribute name="MinHeight" type="xs:string" use="optional" />
-        <xs:attribute name="Speak" type="xs:string" use="optional" />
-        <xs:attribute name="Lang" type="xs:string" use="optional" />
-        <xs:attribute name="VerticalContentAlignment" type="xs:string" use="optional" />
-        <xs:attribute name="Schema" type="xs:string" use="optional" />
-        <xs:attribute name="Title" type="xs:string" use="optional" />
-        <xs:attribute name="CodeSnippet" type="xs:string" use="optional" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -58,8 +51,8 @@
         <xs:attribute name="Color" type="xs:string" use="optional" />
         <xs:attribute name="FontType" type="xs:string" use="optional" />
         <xs:attribute name="HorizontalAlignment	" type="xs:string" use="optional" />
-        <xs:attribute name="Size" type="xs:string" use="optional" />
-        <xs:attribute name="Weight" type="xs:boolean" use="optional" />
+        <xs:attribute name="Size" type="AdaptiveSize" use="optional" />
+        <xs:attribute name="Weight" type="AdaptiveWeight" use="optional" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -71,8 +64,9 @@
         <xs:attribute name="BackgroundColor" type="xs:string" use="optional" />
         <xs:attribute name="Height" type="xs:string" use="optional" />
         <xs:attribute name="HorizontalAlignment" type="xs:string" use="optional" />
-        <xs:attribute name="Size" type="xs:string" use="optional" />
-        <xs:attribute name="Width" type="xs:string" use="optional" />
+        <xs:attribute name="Style" type="AdaptiveImageStyle" use="optional" />
+        <xs:attribute name="Size" type="AdaptiveSize" use="optional" />
+        <xs:attribute name="Width" type="AdaptiveWidth" use="optional" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -149,6 +143,45 @@
       <xs:enumeration value="Large" />
       <xs:enumeration value="ExtraLarge" />
       <xs:enumeration value="Padding" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AdaptiveWidth">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="auto" />
+      <xs:enumeration value="stretch" />
+      <xs:enumeration value="1" />
+      <xs:enumeration value="2" />
+      <xs:enumeration value="50px" />
+      <xs:enumeration value="100px" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AdaptiveWeight">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Lighter" />
+      <xs:enumeration value="Default" />
+      <xs:enumeration value="Bolder" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AdaptiveImageStyle">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Default" />
+      <xs:enumeration value="Person" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AdaptiveSize">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Auto" />
+      <xs:enumeration value="Stretch" />
+      <xs:enumeration value="Small" />
+      <xs:enumeration value="Medium" />
+      <xs:enumeration value="Large" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AdaptiveHorizontalAlignment">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Left" />
+      <xs:enumeration value="Center" />
+      <xs:enumeration value="Right" />
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

@@ -27,9 +27,17 @@
 }
 .card-preview {
     display: flex;
-    justify-content: center;
+    justify-content: start;
     margin-top: 24px;
+
+    .card-sample {
+        margin-right: 164px;
+        background-color: #eceff1;
+    }
 }
 .card-holder {
-    border: 1px solid;
+    max-width: 360px;
+    background-color: #eceff1;
+    border: 1px solid #eceff1;
+    padding: 8px;
 }

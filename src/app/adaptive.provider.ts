@@ -2,14 +2,13 @@
 /* eslint-disable radix */
 /* eslint-disable no-var */
 /* eslint-disable @typescript-eslint/prefer-for-of */
-
-import * as monacoImport from 'monaco-editor/esm/vs/editor/editor.api';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 export class AdaptiveProvider {
-  public static card='';
+  public static card = '';
   public static schemaNode() {
     const adaptiveSchema = `<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="Card" type="AdaptiveCard" />
-    <xs:element name="TextBlock" type="TextBlock"/>
+    <xs:element name="TextBlock" type="TextBlock" />
     <xs:element name="Image" type="Image" />
     <xs:element name="Container" type="Container" />
     <xs:element name="ColumnSet" type="ColumnSet" />
@@ -47,13 +46,6 @@ export class AdaptiveProvider {
           <xs:attribute name="BackgroundImage" type="xs:string" use="optional" />
           <xs:attribute name="FallbackText" type="xs:string" use="optional" />
           <xs:attribute name="Version" type="xs:string" use="optional" />
-          <xs:attribute name="MinHeight" type="xs:string" use="optional" />
-          <xs:attribute name="Speak" type="xs:string" use="optional" />
-          <xs:attribute name="Lang" type="xs:string" use="optional" />
-          <xs:attribute name="VerticalContentAlignment" type="xs:string" use="optional" />
-          <xs:attribute name="Schema" type="xs:string" use="optional" />
-          <xs:attribute name="Title" type="xs:string" use="optional" />
-          <xs:attribute name="CodeSnippet" type="xs:string" use="optional" />
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
@@ -67,8 +59,8 @@ export class AdaptiveProvider {
           <xs:attribute name="Color" type="xs:string" use="optional" />
           <xs:attribute name="FontType" type="xs:string" use="optional" />
           <xs:attribute name="HorizontalAlignment	" type="xs:string" use="optional" />
-          <xs:attribute name="Size" type="xs:string" use="optional" />
-          <xs:attribute name="Weight" type="xs:boolean" use="optional" />
+          <xs:attribute name="Size" type="AdaptiveSize" use="optional" />
+          <xs:attribute name="Weight" type="AdaptiveWeight" use="optional" />
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
@@ -80,8 +72,9 @@ export class AdaptiveProvider {
           <xs:attribute name="BackgroundColor" type="xs:string" use="optional" />
           <xs:attribute name="Height" type="xs:string" use="optional" />
           <xs:attribute name="HorizontalAlignment" type="xs:string" use="optional" />
-          <xs:attribute name="Size" type="xs:string" use="optional" />
-          <xs:attribute name="Width" type="xs:string" use="optional" />
+          <xs:attribute name="Style" type="AdaptiveImageStyle" use="optional" />
+          <xs:attribute name="Size" type="AdaptiveSize" use="optional" />
+          <xs:attribute name="Width" type="AdaptiveWidth" use="optional" />
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
@@ -160,16 +153,55 @@ export class AdaptiveProvider {
         <xs:enumeration value="Padding" />
       </xs:restriction>
     </xs:simpleType>
+    <xs:simpleType name="AdaptiveWidth">
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="auto" />
+        <xs:enumeration value="stretch" />
+        <xs:enumeration value="1" />
+        <xs:enumeration value="2" />
+        <xs:enumeration value="50px" />
+        <xs:enumeration value="100px" />
+      </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="AdaptiveWeight">
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="Lighter" />
+        <xs:enumeration value="Default" />
+        <xs:enumeration value="Bolder" />
+      </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="AdaptiveImageStyle">
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="Default" />
+        <xs:enumeration value="Person" />
+      </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="AdaptiveSize">
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="Auto" />
+        <xs:enumeration value="Stretch" />
+        <xs:enumeration value="Small" />
+        <xs:enumeration value="Medium" />
+        <xs:enumeration value="Large" />
+      </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="AdaptiveHorizontalAlignment">
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="Left" />
+        <xs:enumeration value="Center" />
+        <xs:enumeration value="Right" />
+      </xs:restriction>
+    </xs:simpleType>
   </xs:schema>`.replace(/xs\:/g, ''); // remove 'xs:' prefix for easier navigation later
 
     return AdaptiveProvider.stringToXml(adaptiveSchema).childNodes[0];
   }
 
-  public getCompletionProvider(monaco: any): any {
+  public getCompletionProvider(): any {
     return {
       triggerCharacters: ['<'],
       provideCompletionItems:
-        (model: monacoImport.editor.ITextModel, position: monacoImport.Position, context: any, token: monacoImport.CancellationToken) => {
+        (model: monaco.editor.ITextModel, position: monaco.Position, context: any, token: monaco.CancellationToken) => {
           // get editor content before the pointer
           const textUntilPosition = model.getValueInRange(
             { startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column });
@@ -185,21 +217,20 @@ export class AdaptiveProvider {
           if (context.triggerCharacter && context.triggerCharacter === '<') {
             wrappedTag = true;
           }
-          console.log(context);
           // if we want suggestions, inside of which tag are we?
           const lastOpenedTag = AdaptiveProvider.getLastOpenedTag(areaUntilPositionInfo.clearedText);
-          console.log('lastOpenedTag', lastOpenedTag);
 
           // get opened tags to see what tag we should look for in the XSD schema
           const openedTags = [];
           // get the elements/attributes that are already mentioned in the element we're in
           const usedItems = [];
           const isAttributeSearch = lastOpenedTag && lastOpenedTag.isAttributeSearch;
+          let lastChild = null;
           // no need to calculate the position in the XSD schema if we are in the root element
           if (lastOpenedTag) {
             // parse the content (not cleared text) into an xml document
-            const xmlDoc = AdaptiveProvider.stringToXml(textUntilPosition);
-            let lastChild = xmlDoc.lastElementChild;
+            const xmlDoc = AdaptiveProvider.stringToXml(textUntilPosition + (areaUntilPositionInfo.previousChar === '"' ? '" ' : ''));
+            lastChild = xmlDoc.lastElementChild;
             while (lastChild) {
               openedTags.push(lastChild.tagName);
               // if we found our last opened tag
@@ -207,7 +238,6 @@ export class AdaptiveProvider {
                 // if we are looking for attributes, then used items should
                 // be the attributes we already used
                 if (lastOpenedTag.isAttributeSearch) {
-                  console.log('lastChild', lastChild);
                   const attrs = lastChild.attributes;
                   for (var i = 0; i < attrs.length; i++) {
                     usedItems.push(attrs[i].nodeName);
@@ -237,18 +267,37 @@ export class AdaptiveProvider {
                 currentItem = AdaptiveProvider.findElement(allItemsSchema, openedTags[i]);
               }
             }
+            let result = [];
+            // return available elements/attributes if the tag exists in the schema, or an empty
+            // array if it doesn't
+            if (isAttributeSearch) {
+              // get attributes completions
+              if (areaUntilPositionInfo.previousChar === '"') {
+                const lastUsedAttribute = usedItems[usedItems.length - 1];
+                result = currentItem ? AdaptiveProvider.getElementAttributeAvailableValues(allItemsSchema, currentItem, lastUsedAttribute) : [];
+              } else {
+                result = currentItem ? AdaptiveProvider.getElementAvailableAttributes(allItemsSchema, currentItem, usedItems) : [];
+              }
+            }
+            else {
+              // get elements completions
+              result = currentItem ? AdaptiveProvider.getElementChildren(allItemsSchema, currentItem, usedItems, wrappedTag) : [];
+            }
+            return {
+              suggestions: result
+            };
           } else {
             return {
               suggestions: [{
                 label: 'Card',
-                kind: monacoImport.languages.CompletionItemKind.Function,
+                kind: monaco.languages.CompletionItemKind.Function,
                 documentation: 'Adaptive card root element',
                 insertText: (wrappedTag ? '' : '<') + 'Card Version="1.4" Id="adaptiveCard">\n</Card' + (wrappedTag ? '' : '>'),
-                insertTextRules: monacoImport.languages.CompletionItemInsertTextRule.InsertAsSnippet
+                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
               },
               {
                 label: 'Sample Adaptive Card',
-                kind: monacoImport.languages.CompletionItemKind.Function,
+                kind: monaco.languages.CompletionItemKind.Function,
                 documentation: 'Sample Adaptive card with few elements',
                 insertText: (wrappedTag ? '' : '<') + `Card Version="1.4" Id="adaptiveCard">
 	<Container Id="container1">
@@ -259,26 +308,11 @@ export class AdaptiveProvider {
 			</Column>
 		</ColumnSet>
 	</Container>
-</Card>` + (wrappedTag ? '' : '>'),
-                insertTextRules: monacoImport.languages.CompletionItemInsertTextRule.InsertAsSnippet
+</Card` + (wrappedTag ? '' : '>'),
+                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
               }]
             };
           }
-          let result = [];
-          // return available elements/attributes if the tag exists in the schema, or an empty
-          // array if it doesn't
-          if (isAttributeSearch) {
-            // get attributes completions
-            console.log(currentItem, usedItems);
-            result = currentItem ? AdaptiveProvider.getElementAvailableAttributes(monaco, allItemsSchema, currentItem, usedItems) : [];
-          }
-          else {
-            // get elements completions
-            result = currentItem ? AdaptiveProvider.getElementChildren(monaco, allItemsSchema, currentItem, usedItems, wrappedTag) : [];
-          }
-          return {
-            suggestions: result
-          };
         },
       resolveCompletionItem: (item) => {
         const promise = new Promise((resolve) => {
@@ -290,6 +324,27 @@ export class AdaptiveProvider {
         return promise;
       }
     };
+  }
+  public static getElementAttributeAvailableValues(schemaElements: any, element: any, attributeName: string): any[] {
+    const availableItems = [];
+    const complexType = AdaptiveProvider.findComplexType(schemaElements, element.getAttribute('type'));
+    const complexTypeAttributes = AdaptiveProvider.findComplexTypeAttributes(complexType);
+    for (var i = 0; i < complexTypeAttributes.length; i++) {
+      // get all attributes for the element
+      const attr: any = complexTypeAttributes[i];
+      const attrName = attr.getAttribute('name');
+      if (attrName === attributeName) {
+        const attrType = attr.getAttribute('type');
+        if (attrType.indexOf('xs:') === -1) {
+          // attribute is not simple xs:type
+          const simpleType = AdaptiveProvider.findSimpleType(schemaElements, attrType);
+          if (simpleType) {
+            availableItems.push(...AdaptiveProvider.resolveSimpleType(simpleType));
+          }
+        }
+      }
+    }
+    return availableItems;
   }
   public static stringToXml(text) {
     let xmlDoc;
@@ -341,6 +396,8 @@ export class AdaptiveProvider {
     // opening for strings, comments and CDATA
     const items = ['"', '\'', '<!--', '<![CDATA['];
     let isCompletionAvailable = true;
+    let previousChar = '';
+    previousChar = text[text.length - 1];
     // remove all comments, strings and CDATA
     text = text.replace(/"([^"\\]*(\\.[^"\\]*)*)"|\'([^\'\\]*(\\.[^\'\\]*)*)\'|<!--([\s\S])*?-->|<!\[CDATA\[(.*?)\]\]>/g, '');
     for (let i = 0; i < items.length; i++) {
@@ -350,12 +407,13 @@ export class AdaptiveProvider {
         // from our clear text
         text = text.substring(0, itemIdx);
         // and the completion is not available
-        isCompletionAvailable = false;
+        // isCompletionAvailable = false;
       }
     }
     return {
       isCompletionAvailable,
-      clearedText: text
+      clearedText: text,
+      previousChar
     };
   }
   public static findElement(schemaElements, elementName) {
@@ -369,7 +427,7 @@ export class AdaptiveProvider {
     }
     return res;
   }
-  public static getElementChildren(monaco, schemaElements, element: any, type, wrappedTag) {
+  public static getElementChildren(schemaElements, element: any, type, wrappedTag) {
     const availableItems = [];
     const complexType = AdaptiveProvider.findComplexType(schemaElements, element.getAttribute('type'));
     const childrenElements = AdaptiveProvider.findComplexTypeChildren(complexType);
@@ -383,7 +441,7 @@ export class AdaptiveProvider {
       availableItems.push({
         label: elemName,
         insertText: AdaptiveProvider.generateInsertText(elemName, wrappedTag, hasElements),
-        kind: monacoImport.languages.CompletionItemKind.Function,
+        kind: monaco.languages.CompletionItemKind.Function,
         detail: elemType,
         documentation: 'DOC'
       });
@@ -391,11 +449,10 @@ export class AdaptiveProvider {
     // return the elements we found
     return availableItems;
   }
-  static generateInsertText(elemName: string, wrappedTag: boolean, hasElements: boolean) {;
-    
+  static generateInsertText(elemName: string, wrappedTag: boolean, hasElements: boolean) {
     let defaultAttributes = ' Id="' + AdaptiveProvider.generateId(elemName) + '"';
 
-    let childrenOfElement =''
+    let childrenOfElement = ''
     switch (elemName) {
       case 'TextBlock':
         defaultAttributes += " Text=\"New TextBlock\" Wrap=\"true\"";
@@ -407,7 +464,7 @@ export class AdaptiveProvider {
         defaultAttributes += " Url=\"Image Url\" AltText=\"Image\"";
         break;
       case 'Column':
-        defaultAttributes += " Width=\"strech\"";
+        defaultAttributes += " Width=\"stretch\"";
         break;
 
       case 'FactSet':
@@ -417,9 +474,9 @@ export class AdaptiveProvider {
         break;
 
       case 'ColumnSet':
-        const search='<Column ';
-        const count = this.occurrences(this.card,search) + 1;
-        childrenOfElement = `  <Column Id="${AdaptiveProvider.generateId(elemName)}"  Width="strech">
+        const search = '<Column ';
+        const count = this.getOccurrences(this.card, search) + 1;
+        childrenOfElement = `  <Column Id="${AdaptiveProvider.generateId(elemName)}"  Width="stretch">
   </Column>
 `;
         break;
@@ -427,10 +484,10 @@ export class AdaptiveProvider {
       default:
         break;
     }
-    return ('<') + elemName + defaultAttributes + (hasElements ? '>\n' + childrenOfElement + '</' + elemName + (wrappedTag ? '' : '>') : '/' + (wrappedTag ? '' : '>'));
+    return (wrappedTag ? '' : '\n<') + elemName + defaultAttributes + (hasElements ? '>\n' + childrenOfElement + '</' + elemName + (wrappedTag ? '' : '>') : '/' + (wrappedTag ? '' : '>'));
   }
 
-  static occurrences(string, subString) {
+  static getOccurrences(card, subString) {
     if (subString.length <= 0) {
       return 0;
     }
@@ -440,33 +497,22 @@ export class AdaptiveProvider {
     const step = subString.length;
 
     while (true) {
-        pos = string.indexOf(subString, pos);
-        if (pos >= 0) {
-            n++;
-            pos += step;
-        } else break;
+      pos = card.indexOf(subString, pos);
+      if (pos >= 0) {
+        n++;
+        pos += step;
+      } else break;
     }
     return n;
   }
 
   static generateId(elemName: string) {
     const search = '<' + elemName + ' ';
-    const count = this.occurrences(this.card,search) + 1;
-
+    const count = this.getOccurrences(this.card, search) + 1;
     let lowerVariableKey = elemName.charAt(0).toLowerCase() + elemName.slice(1);
-
-    let randomChar = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    let counter = 0;
-    while (counter < 2) {
-      randomChar += characters.charAt(Math.floor(Math.random() * characters.length));
-      counter ++;
-    }
-
-    return lowerVariableKey + '-' + count + randomChar;
+    return lowerVariableKey + '-' + count;
   }
-
-  public static getElementAvailableAttributes(monaco, schemaElements, element: any, usedChildTags) {
+  public static getElementAvailableAttributes(schemaElements, element: any, usedChildTags) {
     const availableItems = [];
     const complexType = AdaptiveProvider.findComplexType(schemaElements, element.getAttribute('type'));
     const complexTypeAttributes = AdaptiveProvider.findComplexTypeAttributes(complexType);
@@ -479,7 +525,7 @@ export class AdaptiveProvider {
         availableItems.push({
           label: attrName,
           insertText: attrName + '=\"\" ',
-          kind: monacoImport.languages.CompletionItemKind.Property,
+          kind: monaco.languages.CompletionItemKind.Property,
           detail: attrType,
           documentation: 'DOC' // TODO
         });
@@ -496,6 +542,34 @@ export class AdaptiveProvider {
       }
       else if (element.tagName === 'complexContent') {
         childrenElements.push(...AdaptiveProvider.handleComplexContentChildren(element, 'elements'));
+      }
+    }
+    return childrenElements;
+  }
+
+  static resolveSimpleType(simpleType: any): any {
+    const childrenElements = [];
+    for (let index = 0; index < simpleType.children.length; index++) {
+      const element = simpleType.children[index];
+      if (element.tagName === 'restriction') {
+        const elementType = element.getAttribute('base');
+        childrenElements.push(...AdaptiveProvider.getRestrictionArray(element, elementType.replace('xs:', '')));
+      }
+    }
+    return childrenElements;
+  }
+  static getRestrictionArray(restriction: any, attrType: string) {
+    const childrenElements = [];
+    for (let index = 0; index < restriction.children.length; index++) {
+      const element = restriction.children[index];
+      if (element.tagName === 'enumeration') {
+        const elementValue = element.getAttribute('value');
+        childrenElements.push({
+          label: elementValue,
+          insertText: elementValue,
+          kind: monaco.languages.CompletionItemKind.EnumMember,
+          detail: attrType
+        });
       }
     }
     return childrenElements;

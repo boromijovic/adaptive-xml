@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
 
   @ViewChild('editor')
   public editorContent!: ElementRef;
-  
+
   @ViewChild('editorData')
   public editorData!: ElementRef;
 
@@ -29,13 +29,284 @@ export class AppComponent implements OnInit {
   public columnsProperties = ['ColumnSet'];
   public factsProperties = ['FactSet'];
   public xml: any;
-
+  hostConfig = {
+    "spacing": {
+      "small": 3,
+      "default": 8,
+      "medium": 20,
+      "large": 30,
+      "extraLarge": 40,
+      "padding": 10
+    },
+    "separator": {
+      "lineThickness": 1,
+      "lineColor": "#EEEEEE"
+    },
+    "supportsInteractivity": true,
+    "fontTypes": {
+      "default": {
+        "fontFamily": "Calibri, sans-serif",
+        "fontSizes": {
+          "small": 12,
+          "default": 14,
+          "medium": 17,
+          "large": 21,
+          "extraLarge": 26
+        },
+        "fontWeights": {
+          "lighter": 200,
+          "default": 400,
+          "bolder": 600
+        }
+      },
+      "monospace": {
+        "fontFamily": "'Courier New', Courier, monospace",
+        "fontSizes": {
+          "small": 12,
+          "default": 14,
+          "medium": 17,
+          "large": 21,
+          "extraLarge": 26
+        },
+        "fontWeights": {
+          "lighter": 200,
+          "default": 400,
+          "bolder": 600
+        }
+      }
+    },
+    "containerStyles": {
+      "default": {
+        "backgroundColor": "#FFFFFF",
+        "foregroundColors": {
+          "default": {
+            "default": "#000000",
+            "subtle": "#767676"
+          },
+          "accent": {
+            "default": "#0063B1",
+            "subtle": "#0063B1"
+          },
+          "attention": {
+            "default": "#FF0000",
+            "subtle": "#DDFF0000"
+          },
+          "good": {
+            "default": "#54a254",
+            "subtle": "#DD54a254"
+          },
+          "warning": {
+            "default": "#c3ab23",
+            "subtle": "#DDc3ab23"
+          }
+        }
+      },
+      "emphasis": {
+        "backgroundColor": "#F0F0F0",
+        "foregroundColors": {
+          "default": {
+            "default": "#000000",
+            "subtle": "#767676"
+          },
+          "accent": {
+            "default": "#2E89FC",
+            "subtle": "#882E89FC"
+          },
+          "attention": {
+            "default": "#FF0000",
+            "subtle": "#DDFF0000"
+          },
+          "good": {
+            "default": "#54a254",
+            "subtle": "#DD54a254"
+          },
+          "warning": {
+            "default": "#c3ab23",
+            "subtle": "#DDc3ab23"
+          }
+        }
+      },
+      "accent": {
+        "backgroundColor": "#C7DEF9",
+        "foregroundColors": {
+          "default": {
+            "default": "#333333",
+            "subtle": "#EE333333"
+          },
+          "dark": {
+            "default": "#000000",
+            "subtle": "#66000000"
+          },
+          "light": {
+            "default": "#FFFFFF",
+            "subtle": "#33000000"
+          },
+          "accent": {
+            "default": "#2E89FC",
+            "subtle": "#882E89FC"
+          },
+          "attention": {
+            "default": "#cc3300",
+            "subtle": "#DDcc3300"
+          },
+          "good": {
+            "default": "#54a254",
+            "subtle": "#DD54a254"
+          },
+          "warning": {
+            "default": "#e69500",
+            "subtle": "#DDe69500"
+          }
+        }
+      },
+      "good": {
+        "backgroundColor": "#CCFFCC",
+        "foregroundColors": {
+          "default": {
+            "default": "#333333",
+            "subtle": "#EE333333"
+          },
+          "dark": {
+            "default": "#000000",
+            "subtle": "#66000000"
+          },
+          "light": {
+            "default": "#FFFFFF",
+            "subtle": "#33000000"
+          },
+          "accent": {
+            "default": "#2E89FC",
+            "subtle": "#882E89FC"
+          },
+          "attention": {
+            "default": "#cc3300",
+            "subtle": "#DDcc3300"
+          },
+          "good": {
+            "default": "#54a254",
+            "subtle": "#DD54a254"
+          },
+          "warning": {
+            "default": "#e69500",
+            "subtle": "#DDe69500"
+          }
+        }
+      },
+      "attention": {
+        "backgroundColor": "#FFC5B2",
+        "foregroundColors": {
+          "default": {
+            "default": "#333333",
+            "subtle": "#EE333333"
+          },
+          "dark": {
+            "default": "#000000",
+            "subtle": "#66000000"
+          },
+          "light": {
+            "default": "#FFFFFF",
+            "subtle": "#33000000"
+          },
+          "accent": {
+            "default": "#2E89FC",
+            "subtle": "#882E89FC"
+          },
+          "attention": {
+            "default": "#cc3300",
+            "subtle": "#DDcc3300"
+          },
+          "good": {
+            "default": "#54a254",
+            "subtle": "#DD54a254"
+          },
+          "warning": {
+            "default": "#e69500",
+            "subtle": "#DDe69500"
+          }
+        }
+      },
+      "warning": {
+        "backgroundColor": "#FFE2B2",
+        "foregroundColors": {
+          "default": {
+            "default": "#333333",
+            "subtle": "#EE333333"
+          },
+          "dark": {
+            "default": "#000000",
+            "subtle": "#66000000"
+          },
+          "light": {
+            "default": "#FFFFFF",
+            "subtle": "#33000000"
+          },
+          "accent": {
+            "default": "#2E89FC",
+            "subtle": "#882E89FC"
+          },
+          "attention": {
+            "default": "#cc3300",
+            "subtle": "#DDcc3300"
+          },
+          "good": {
+            "default": "#54a254",
+            "subtle": "#DD54a254"
+          },
+          "warning": {
+            "default": "#e69500",
+            "subtle": "#DDe69500"
+          }
+        }
+      }
+    },
+    "imageSizes": {
+      "small": 40,
+      "medium": 80,
+      "large": 160
+    },
+    "actions": {
+      "maxActions": 5,
+      "spacing": "default",
+      "buttonSpacing": 8,
+      "showCard": {
+        "actionMode": "inline",
+        "inlineTopMargin": 8
+      },
+      "actionsOrientation": "horizontal",
+      "actionAlignment": "stretch"
+    },
+    "adaptiveCard": {
+      "allowCustomStyle": false
+    },
+    "imageSet": {
+      "imageSize": "medium",
+      "maxImageHeight": 100
+    },
+    "factSet": {
+      "title": {
+        "color": "default",
+        "size": "default",
+        "isSubtle": false,
+        "weight": "bolder",
+        "wrap": true,
+        "maxWidth": 150
+      },
+      "value": {
+        "color": "default",
+        "size": "default",
+        "isSubtle": false,
+        "weight": "default",
+        "wrap": true
+      },
+      "spacing": 8
+    }
+  };
   cardData = {
     title: 'Publish Adaptive Card Schema',
     description: 'Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.',
     creator: {
       name: 'Matt Hidinger',
-      profileImage: 'https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg'
+      profileImage: 'https://avatars.githubusercontent.com/u/1432195?v=4'
     },
     createdUtc: '2017-02-14T06:08:39Z',
     viewUrl: 'https://adaptivecards.io',
@@ -59,7 +330,7 @@ export class AppComponent implements OnInit {
     ]
   };
 
-  constructor( private cdr: ChangeDetectorRef) {
+  constructor(private cdr: ChangeDetectorRef) {
   }
 
   public ngOnInit(): void {
@@ -133,9 +404,9 @@ export class AppComponent implements OnInit {
       },
     });
     // xsdFeatures.addCompletion(); // Add auto completion.
-    monaco.languages.registerCompletionItemProvider('xml', new AdaptiveProvider().getCompletionProvider(monaco));
+    monaco.languages.registerCompletionItemProvider('xml', new AdaptiveProvider().getCompletionProvider());
     xsdFeatures.addValidation(); // Add auto validation on debounce. Can be manually triggered with doValidation.
-    xsdFeatures.addGenerateAction(); // Add geneate template to actions menu. Generate can be run with doGenerate.
+    xsdFeatures.addGenerateAction(); // Add generate template to actions menu. Generate can be run with doGenerate.
     xsdFeatures.addReformatAction(); // Add reformat code to actions menu. Can be run manually with doReformatCode.
     editor.getModel().onDidChangeContent((event) => {
       if (this.jssdk.nativeElement.firstChild) {
@@ -144,7 +415,7 @@ export class AppComponent implements OnInit {
       const monacoValue = editor.getModel().getValue();
       Xml2Js.parseString(monacoValue, (err: any, result: any) => {
         this.cardDefinition = this.reconfigureJsonToNormal(result);
-
+        console.log('cardDefinition', this.cardDefinition);
         this.updateCard(this.cardDefinition);
       });
 
@@ -166,20 +437,23 @@ export class AppComponent implements OnInit {
 
   updateCard(definition) {
     const template = new ACData.Template(definition);
-        const context: ACData.IEvaluationContext = {
-          $root: this.cardData,
-        };
-        const card = template.expand(context);
-        const adaptiveCard = new AdaptiveCards.AdaptiveCard();
-        AdaptiveCards.AdaptiveCard.onProcessMarkdown = (text, res) => {
-          res.outputHtml = snarkdown(text);
-          res.didProcess = true;
-        };
+    const context: ACData.IEvaluationContext = {
+      $root: this.cardData,
+    };
+    const card = template.expand(context);
+    const adaptiveCard = new AdaptiveCards.AdaptiveCard();
+    adaptiveCard.hostConfig = new AdaptiveCards.HostConfig(
+      this.hostConfig
+    );
+    AdaptiveCards.AdaptiveCard.onProcessMarkdown = (text, res) => {
+      res.outputHtml = snarkdown(text);
+      res.didProcess = true;
+    };
 
-        adaptiveCard.parse(card);
-        const renderedCard = adaptiveCard.render();
-        this.jssdk.nativeElement.appendChild(renderedCard);
-        this.cdr.detectChanges();
+    adaptiveCard.parse(card);
+    const renderedCard = adaptiveCard.render();
+    this.jssdk.nativeElement.appendChild(renderedCard);
+    this.cdr.detectChanges();
   }
 
   cleanXML(xml: any) {
@@ -195,9 +469,9 @@ export class AppComponent implements OnInit {
     xml = xml.replaceAll('<Facts>', '');
     xml = xml.replaceAll('</Facts>', '');
 
-    xml = xml.replaceAll(`<?xml version='1.0'?>`,'');
-    xml = xml.replaceAll('<adaptiveCard>','');
-    xml = xml.replaceAll('</adaptiveCard>','');
+    xml = xml.replaceAll(`<?xml version='1.0'?>`, '');
+    xml = xml.replaceAll('<adaptiveCard>', '');
+    xml = xml.replaceAll('</adaptiveCard>', '');
 
     return xml;
   }
@@ -331,6 +605,7 @@ export class AppComponent implements OnInit {
     for (const variableKey in obj) {
       let lowerVariableKey = variableKey.charAt(0).toLowerCase() + variableKey.slice(1);
       lowerVariableKey === 'schema' ? lowerVariableKey = '$schema' : lowerVariableKey;
+      lowerVariableKey === 'data' ? lowerVariableKey = '$data' : lowerVariableKey;
       if (obj[variableKey] === 'true') {
         newObj[lowerVariableKey] = true;
       }
