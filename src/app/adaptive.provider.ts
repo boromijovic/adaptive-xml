@@ -6,172 +6,160 @@
 import * as monacoImport from 'monaco-editor/esm/vs/editor/editor.api';
 export class AdaptiveProvider {
   public static schemaNode() {
-    const adaptiveSchema = `<?xml version="1.0" encoding="utf-8"?>
-    <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-      <xs:element name="Card" nillable="true" type="AdaptiveCard" />
-      <xs:element name="TextBlock" type="TextBlock" />
-      <xs:element name="Image" type="Image" />
-      <xs:element name="Container" type="Container" />
-      <xs:element name="ColumnSet" type="ColumnSet" />
-      <xs:element name="Column" type="Column" />
-      <xs:element name="FactSet" type="FactSet" />
-      <xs:element name="Fact" type="Fact" />
-      <xs:element name="Input.Text" type="Input.Text" />
-      <xs:complexType name="AdaptiveTypedElement" abstract="true">
-        <xs:attribute name="Id" type="xs:string" />
-      </xs:complexType>
-      <xs:complexType name="AdaptiveElement" abstract="true">
-        <xs:complexContent mixed="false">
-          <xs:extension base="AdaptiveTypedElement">
-            <xs:attribute default="Default" name="Spacing" type="AdaptiveSpacing" />
-            <xs:attribute default="false" name="Separator" type="xs:boolean" />
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="AdaptiveInput" abstract="true">
-        <xs:complexContent mixed="false">
-          <xs:extension base="AdaptiveElement" />
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="AdaptiveCard">
-        <xs:complexContent mixed="false">
-          <xs:extension base="AdaptiveTypedElement">
-            <xs:sequence>
-              <xs:element minOccurs="0" maxOccurs="1" name="TextBlock" type="TextBlock" />
-              <xs:element minOccurs="0" maxOccurs="1" name="Image" type="Image" />
-              <xs:element minOccurs="0" maxOccurs="1" name="Container" type="Container" />
-              <xs:element minOccurs="0" maxOccurs="1" name="ColumnSet" type="ColumnSet" />
-              <xs:element minOccurs="0" maxOccurs="1" name="FactSet" type="FactSet" />
-              <xs:element minOccurs="0" maxOccurs="1" name="Input.Text" type="Input.Text" />
-            </xs:sequence>
-            <xs:attribute name="BackgroundImage" type="xs:string" use="optional" />
-            <xs:attribute name="FallbackText" type="xs:string" use="optional" />
-            <xs:attribute name="Version" type="xs:string" use="optional" />
-            <xs:attribute name="MinHeight" type="xs:string" use="optional" />
-            <xs:attribute name="Speak" type="xs:string" use="optional" />
-            <xs:attribute name="Lang" type="xs:string" use="optional" />
-            <xs:attribute name="VerticalContentAlignment" type="xs:string" use="optional" />
-            <xs:attribute name="Schema" type="xs:string" use="optional" />
-            <xs:attribute name="Lang" type="xs:string" use="optional" />
-            <xs:attribute name="Title" type="xs:string" use="optional" />
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="TextBlock" mixed="true">
-        <xs:complexContent mixed="false">
-          <xs:extension base="AdaptiveElement">
-            <xs:attribute default="false" name="IsSubtle" type="xs:boolean" use="optional"/>
-            <xs:attribute default="false" name="Wrap" type="xs:boolean" use="optional"/>
-            <xs:attribute default="0" name="MaxLines" type="xs:int" />
-            <xs:attribute name="Text" type="xs:string" />
-            <xs:attribute name="Color" type="xs:string" use="optional"/>
-            <xs:attribute name="FontType" type="xs:string" use="optional"/>
-            <xs:attribute name="HorizontalAlignment	" type="xs:string" use="optional"/>
-            <xs:attribute name="Size" type="xs:number" use="optional"/>
-            <xs:attribute name="Weight" type="xs:boolean" use="optional"/>
-            </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="Image">
-        <xs:complexContent mixed="false">
-          <xs:extension base="AdaptiveElement">
-            <xs:attribute name="Url" type="xs:string" />
-            <xs:attribute name="AltText" type="xs:string" use="optional"/> 
-            <xs:attribute name="BackgroundColor" type="xs:string" use="optional"/> 
-            <xs:attribute name="Height" type="xs:string" use="optional"/>
-            <xs:attribute name="HorizontalAlignment" type="xs:string" use="optional"/>
-            <xs:attribute name="Size" type="xs:string" use="optional"/>
-            <xs:attribute name="Style" type="xs:string" use="optional"/>
-            <xs:attribute name="Width" type="xs:string" use="optional" />
-            </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="Container">
-        <xs:complexContent mixed="false">
-          <xs:extension base="AdaptiveElement">
-            <xs:sequence>
-              <xs:element minOccurs="0" maxOccurs="1" name="TextBlock" type="TextBlock" />
-              <xs:element minOccurs="0" maxOccurs="1" name="Image" type="Image" />
-              <xs:element minOccurs="0" maxOccurs="1" name="Container" type="Container" />
-              <xs:element minOccurs="0" maxOccurs="1" name="ColumnSet" type="ColumnSet" />
-              <xs:element minOccurs="0" maxOccurs="1" name="FactSet" type="FactSet" />
-              <xs:element minOccurs="0" maxOccurs="1" name="Input.Text" type="Input.Text" />
-            </xs:sequence>
-            <xs:attribute name="Style" type="xs:string" use="optional"/> 
-            <xs:attribute name="VerticalContentAlignment" type="xs:string" use="optional"/> 
-            <xs:attribute name="Bleed" type="xs:string" use="optional"/> 
-            <xs:attribute name="BackgroundImage" type="xs:string" use="optional"/> 
-            <xs:attribute name="MinHeight" type="xs:string" use="optional"/> 
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="ColumnSet">
-        <xs:complexContent mixed="false">
-          <xs:extension base="AdaptiveElement">
-            <xs:sequence>
-              <xs:element minOccurs="0" maxOccurs="unbounded" name="Column" type="Column" />
-            </xs:sequence>
-            <xs:attribute name="Style" type="xs:string" use="optional"/> 
-            <xs:attribute name="HorizontalAlignment" type="xs:string" use="optional"/> 
-            <xs:attribute name="Bleed" type="xs:string" use="optional"/>
-            <xs:attribute name="MinHeight" type="xs:string" use="optional"/> 
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="Input.Text">
-        <xs:complexContent mixed="false">
-          <xs:extension base="AdaptiveInput">
-            <xs:attribute name="Placeholder" type="xs:string" />
-            <xs:attribute name="Value" type="xs:string" />
-            <xs:attribute default="false" name="IsMultiline" type="xs:boolean" />
-            <xs:attribute default="0" name="MaxLength" type="xs:int" />
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="FactSet">
-        <xs:complexContent mixed="false">
-          <xs:extension base="AdaptiveElement">
-            <xs:sequence>
-              <xs:element minOccurs="0" maxOccurs="unbounded" name="Fact" type="Fact" />
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="Fact">
-        <xs:complexContent mixed="false">
-          <xs:extension base="AdaptiveElement">
-            <xs:attribute name="Title" type="xs:string" />
-            <xs:attribute name="Value" type="xs:string" />
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="Column">
-        <xs:complexContent mixed="false">
-          <xs:extension base="Container">
-          <xs:attribute name="Width" type="xs:string" />
-          <xs:attribute name="Bleed" type="xs:string" use="optional"/> 
-          <xs:attribute name="Style" type="xs:string" use="optional"/> 
-          <xs:attribute name="VerticalContentAlignment" type="xs:string" use="optional"/> 
-          <xs:attribute name="BackgroundImage" type="xs:string" use="optional"/> 
-          <xs:attribute name="MinHeight" type="xs:string" use="optional"/> 
-          <xs:attribute name="Fallback" type="xs:string" use="optional"/> 
-          <xs:attribute name="Separator" type="xs:string" use="optional"/> 
-          <xs:attribute name="Spacing" type="xs:string" use="optional"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:simpleType name="AdaptiveSpacing">
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="Default" />
-          <xs:enumeration value="None" />
-          <xs:enumeration value="Small" />
-          <xs:enumeration value="Medium" />
-          <xs:enumeration value="Large" />
-          <xs:enumeration value="ExtraLarge" />
-          <xs:enumeration value="Padding" />
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:schema>`.replace(/xs\:/g, ''); // remove 'xs:' prefix for easier navigation later
+    const adaptiveSchema = `<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="Card" type="AdaptiveCard" />
+    <xs:element name="TextBlock" type="TextBlock"/>
+    <xs:element name="Image" type="Image" />
+    <xs:element name="Container" type="Container" />
+    <xs:element name="ColumnSet" type="ColumnSet" />
+    <xs:element name="Column" type="Column" />
+    <xs:element name="FactSet" type="FactSet" />
+    <xs:element name="Fact" type="Fact" />
+    <xs:element name="Input.Text" type="Input.Text" />
+    <xs:complexType name="AdaptiveTypedElement" abstract="true">
+      <xs:attribute name="Id" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="AdaptiveElement" abstract="true">
+      <xs:complexContent mixed="false">
+        <xs:extension base="AdaptiveTypedElement">
+          <xs:attribute default="Default" name="Spacing" type="AdaptiveSpacing" />
+          <xs:attribute default="false" name="Separator" type="xs:boolean" />
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="AdaptiveInput" abstract="true">
+      <xs:complexContent mixed="false">
+        <xs:extension base="AdaptiveElement" />
+      </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="AdaptiveCard">
+      <xs:complexContent mixed="false">
+        <xs:extension base="AdaptiveTypedElement">
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="TextBlock" type="TextBlock" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Image" type="Image" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Container" type="Container" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ColumnSet" type="ColumnSet" />
+            <xs:element minOccurs="0" maxOccurs="1" name="FactSet" type="FactSet" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Input.Text" type="Input.Text" />
+          </xs:sequence>
+          <xs:attribute name="BackgroundImage" type="xs:string" use="optional" />
+          <xs:attribute name="FallbackText" type="xs:string" use="optional" />
+          <xs:attribute name="Version" type="xs:string" use="optional" />
+          <xs:attribute name="MinHeight" type="xs:string" use="optional" />
+          <xs:attribute name="Speak" type="xs:string" use="optional" />
+          <xs:attribute name="Lang" type="xs:string" use="optional" />
+          <xs:attribute name="VerticalContentAlignment" type="xs:string" use="optional" />
+          <xs:attribute name="Schema" type="xs:string" use="optional" />
+          <xs:attribute name="Title" type="xs:string" use="optional" />
+          <xs:attribute name="CodeSnippet" type="xs:string" use="optional" />
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="TextBlock" mixed="true">
+      <xs:complexContent mixed="false">
+        <xs:extension base="AdaptiveElement">
+          <xs:attribute default="false" name="IsSubtle" type="xs:boolean" use="optional" />
+          <xs:attribute default="false" name="Wrap" type="xs:boolean" use="optional" />
+          <xs:attribute default="0" name="MaxLines" type="xs:int" />
+          <xs:attribute name="Text" type="xs:string" />
+          <xs:attribute name="Color" type="xs:string" use="optional" />
+          <xs:attribute name="FontType" type="xs:string" use="optional" />
+          <xs:attribute name="HorizontalAlignment	" type="xs:string" use="optional" />
+          <xs:attribute name="Size" type="xs:string" use="optional" />
+          <xs:attribute name="Weight" type="xs:boolean" use="optional" />
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Image">
+      <xs:complexContent mixed="false">
+        <xs:extension base="AdaptiveElement">
+          <xs:attribute name="Url" type="xs:string" />
+          <xs:attribute name="AltText" type="xs:string" use="optional" />
+          <xs:attribute name="BackgroundColor" type="xs:string" use="optional" />
+          <xs:attribute name="Height" type="xs:string" use="optional" />
+          <xs:attribute name="HorizontalAlignment" type="xs:string" use="optional" />
+          <xs:attribute name="Size" type="xs:string" use="optional" />
+          <xs:attribute name="Width" type="xs:string" use="optional" />
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Container">
+      <xs:complexContent mixed="false">
+        <xs:extension base="AdaptiveElement">
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="TextBlock" type="TextBlock" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Image" type="Image" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Container" type="Container" />
+            <xs:element minOccurs="0" maxOccurs="1" name="ColumnSet" type="ColumnSet" />
+            <xs:element minOccurs="0" maxOccurs="1" name="FactSet" type="FactSet" />
+            <xs:element minOccurs="0" maxOccurs="1" name="Input.Text" type="Input.Text" />
+          </xs:sequence>
+          <xs:attribute name="VerticalContentAlignment" type="xs:string" use="optional" />
+          <xs:attribute name="Bleed" type="xs:string" use="optional" />
+          <xs:attribute name="BackgroundImage" type="xs:string" use="optional" />
+          <xs:attribute name="MinHeight" type="xs:string" use="optional" />
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ColumnSet">
+      <xs:complexContent mixed="false">
+        <xs:extension base="AdaptiveElement">
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Column" type="Column" />
+          </xs:sequence>
+          <xs:attribute name="HorizontalAlignment" type="xs:string" use="optional" />
+          <xs:attribute name="Bleed" type="xs:string" use="optional" />
+          <xs:attribute name="MinHeight" type="xs:string" use="optional" />
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Input.Text">
+      <xs:complexContent mixed="false">
+        <xs:extension base="AdaptiveInput">
+          <xs:attribute name="Placeholder" type="xs:string" />
+          <xs:attribute name="Value" type="xs:string" />
+          <xs:attribute default="false" name="IsMultiline" type="xs:boolean" />
+          <xs:attribute default="0" name="MaxLength" type="xs:int" />
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="FactSet">
+      <xs:complexContent mixed="false">
+        <xs:extension base="AdaptiveElement">
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Fact" type="Fact" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Fact">
+      <xs:complexContent mixed="false">
+        <xs:extension base="AdaptiveElement">
+          <xs:attribute name="Title" type="xs:string" />
+          <xs:attribute name="Value" type="xs:string" />
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Column">
+      <xs:complexContent mixed="false">
+        <xs:extension base="Container">
+          <xs:attribute name="Fallback" type="xs:string" use="optional" />
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="AdaptiveSpacing">
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="Default" />
+        <xs:enumeration value="None" />
+        <xs:enumeration value="Small" />
+        <xs:enumeration value="Medium" />
+        <xs:enumeration value="Large" />
+        <xs:enumeration value="ExtraLarge" />
+        <xs:enumeration value="Padding" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:schema>`.replace(/xs\:/g, ''); // remove 'xs:' prefix for easier navigation later
 
     return AdaptiveProvider.stringToXml(adaptiveSchema).childNodes[0];
   }
@@ -393,8 +381,7 @@ export class AdaptiveProvider {
       const hasElements = AdaptiveProvider.findComplexTypeChildren(elemComplexType).length > 0;
       availableItems.push({
         label: elemName,
-        insertText: (wrappedTag ? '' : '\n<') + elemName +
-          (hasElements ? '>\n</' + elemName + (wrappedTag ? '' : '>') : '/' + (wrappedTag ? '' : '>')),
+        insertText: AdaptiveProvider.generateInsertText(elemName, wrappedTag, hasElements),
         kind: monacoImport.languages.CompletionItemKind.Function,
         detail: elemType,
         documentation: 'DOC'
@@ -402,6 +389,21 @@ export class AdaptiveProvider {
     }
     // return the elements we found
     return availableItems;
+  }
+  static generateInsertText(elemName: string, wrappedTag: boolean, hasElements: boolean) {
+    let defaultAttributes = 'Id="' + AdaptiveProvider.generateId(elemName) + '" ';
+    switch (elemName) {
+      case 'TextBlock':
+        defaultAttributes += " Text=\"New TextBloc\" Wrap=\"true\" ";
+        break;
+
+      default:
+        break;
+    }
+    return (wrappedTag ? '' : '\n<') + elemName + defaultAttributes + (hasElements ? '>\n</' + elemName + (wrappedTag ? '' : '>') : '/' + (wrappedTag ? '' : '>'));
+  }
+  static generateId(elemName: string) {
+    return elemName + '1';
   }
   public static getElementAvailableAttributes(monaco, schemaElements, element: any, usedChildTags) {
     const availableItems = [];

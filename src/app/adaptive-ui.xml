@@ -1,6 +1,6 @@
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="Card" nillable="true" type="AdaptiveCard" />
-  <xs:element name="TextBlock" type="TextBlock" />
+  <xs:element name="Card" type="AdaptiveCard" />
+  <xs:element name="TextBlock" type="TextBlock"/>
   <xs:element name="Image" type="Image" />
   <xs:element name="Container" type="Container" />
   <xs:element name="ColumnSet" type="ColumnSet" />
@@ -43,8 +43,8 @@
         <xs:attribute name="Lang" type="xs:string" use="optional" />
         <xs:attribute name="VerticalContentAlignment" type="xs:string" use="optional" />
         <xs:attribute name="Schema" type="xs:string" use="optional" />
-        <xs:attribute name="Lang" type="xs:string" use="optional" />
         <xs:attribute name="Title" type="xs:string" use="optional" />
+        <xs:attribute name="CodeSnippet" type="xs:string" use="optional" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -58,7 +58,7 @@
         <xs:attribute name="Color" type="xs:string" use="optional" />
         <xs:attribute name="FontType" type="xs:string" use="optional" />
         <xs:attribute name="HorizontalAlignment	" type="xs:string" use="optional" />
-        <xs:attribute name="Size" type="xs:number" use="optional" />
+        <xs:attribute name="Size" type="xs:string" use="optional" />
         <xs:attribute name="Weight" type="xs:boolean" use="optional" />
       </xs:extension>
     </xs:complexContent>
@@ -72,7 +72,6 @@
         <xs:attribute name="Height" type="xs:string" use="optional" />
         <xs:attribute name="HorizontalAlignment" type="xs:string" use="optional" />
         <xs:attribute name="Size" type="xs:string" use="optional" />
-        <xs:attribute name="Style" type="xs:string" use="optional" />
         <xs:attribute name="Width" type="xs:string" use="optional" />
       </xs:extension>
     </xs:complexContent>
@@ -88,7 +87,6 @@
           <xs:element minOccurs="0" maxOccurs="1" name="FactSet" type="FactSet" />
           <xs:element minOccurs="0" maxOccurs="1" name="Input.Text" type="Input.Text" />
         </xs:sequence>
-        <xs:attribute name="Style" type="xs:string" use="optional" />
         <xs:attribute name="VerticalContentAlignment" type="xs:string" use="optional" />
         <xs:attribute name="Bleed" type="xs:string" use="optional" />
         <xs:attribute name="BackgroundImage" type="xs:string" use="optional" />
@@ -102,7 +100,6 @@
         <xs:sequence>
           <xs:element minOccurs="0" maxOccurs="unbounded" name="Column" type="Column" />
         </xs:sequence>
-        <xs:attribute name="Style" type="xs:string" use="optional" />
         <xs:attribute name="HorizontalAlignment" type="xs:string" use="optional" />
         <xs:attribute name="Bleed" type="xs:string" use="optional" />
         <xs:attribute name="MinHeight" type="xs:string" use="optional" />
@@ -139,15 +136,7 @@
   <xs:complexType name="Column">
     <xs:complexContent mixed="false">
       <xs:extension base="Container">
-        <xs:attribute name="Width" type="xs:string" />
-        <xs:attribute name="Bleed" type="xs:string" use="optional" />
-        <xs:attribute name="Style" type="xs:string" use="optional" />
-        <xs:attribute name="VerticalContentAlignment" type="xs:string" use="optional" />
-        <xs:attribute name="BackgroundImage" type="xs:string" use="optional" />
-        <xs:attribute name="MinHeight" type="xs:string" use="optional" />
         <xs:attribute name="Fallback" type="xs:string" use="optional" />
-        <xs:attribute name="Separator" type="xs:string" use="optional" />
-        <xs:attribute name="Spacing" type="xs:string" use="optional" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
