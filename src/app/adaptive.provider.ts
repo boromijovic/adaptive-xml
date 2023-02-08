@@ -304,7 +304,7 @@ export class AdaptiveProvider {
 		<ColumnSet Id="columnSet1">
 			<Column Id="column1" Width="auto">
 				<Image Id="image1" Url="https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg" AltText="Matt Hidinger" Size="Small" />
-				<TextBlock Id="text1" Text="Hello World" />
+				<TextBlock Id="text1" />
 			</Column>
 		</ColumnSet>
 	</Container>
@@ -452,10 +452,12 @@ export class AdaptiveProvider {
   static generateInsertText(elemName: string, wrappedTag: boolean, hasElements: boolean) {
     let defaultAttributes = ' Id="' + AdaptiveProvider.generateId(elemName) + '"';
 
-    let childrenOfElement = ''
+    let childrenOfElement = '\n'
     switch (elemName) {
       case 'TextBlock':
-        defaultAttributes += " Text=\"New TextBlock\" Wrap=\"true\"";
+        defaultAttributes += " Wrap=\"true\"";
+        childrenOfElement = "New TextBlock";
+        hasElements=true
         break;
       case 'Input.Text':
         defaultAttributes += " Placeholder=\"Placeholder text\"";
@@ -468,7 +470,8 @@ export class AdaptiveProvider {
         break;
 
       case 'FactSet':
-        childrenOfElement = `  <Fact Title="Fact 1" Value="Value 1"/>
+        childrenOfElement = `
+  <Fact Title="Fact 1" Value="Value 1"/>
   <Fact Title="Fact 2" Value="Value 2"/>
 `;
         break;
@@ -476,7 +479,8 @@ export class AdaptiveProvider {
       case 'ColumnSet':
         const search = '<Column ';
         const count = this.getOccurrences(this.card, search) + 1;
-        childrenOfElement = `  <Column Id="${AdaptiveProvider.generateId(elemName)}"  Width="stretch">
+        childrenOfElement = `  
+  <Column Id="${AdaptiveProvider.generateId(elemName)}"  Width="stretch">
   </Column>
 `;
         break;
@@ -484,7 +488,7 @@ export class AdaptiveProvider {
       default:
         break;
     }
-    return (wrappedTag ? '' : '\n<') + elemName + defaultAttributes + (hasElements ? '>\n' + childrenOfElement + '</' + elemName + (wrappedTag ? '' : '>') : '/' + (wrappedTag ? '' : '>'));
+    return (wrappedTag ? '' : '\n<') + elemName + defaultAttributes + (hasElements ? '>' + childrenOfElement + '</' + elemName + (wrappedTag ? '' : '>') : '/' + (wrappedTag ? '' : '>'));
   }
 
   static getOccurrences(card, subString) {

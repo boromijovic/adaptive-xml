@@ -369,7 +369,7 @@ export class AppComponent implements OnInit {
       scrollBeyondLastLine: false,
       fontSize: 18,
       tabSize: 2,
-    });
+    }); 
     const dataEditor = monaco.editor.create(dataDiv, {
       model: monaco.editor.createModel(JSON.stringify(this.cardData, null, '\t'), 'json'),
       minimap: {
@@ -576,6 +576,8 @@ export class AppComponent implements OnInit {
   }
 
   reconfigureJsonToNormal(json: any) {
+    console.log('json',json);
+    
     let newJson: any = {};
     if (Object.keys(json)) {
       const arrayOfAllObjects = [];
@@ -621,10 +623,19 @@ export class AppComponent implements OnInit {
 
   goThroughObjectProperties(obj: any, mainProperty: any) {
     let newObj: any = {};
+    let objText;
     for (const propertyOfarrayObj in obj) {
       // Levels attributes to root level
       if (propertyOfarrayObj === '$') {
+        console.log("Vlegov $", obj[propertyOfarrayObj]);
         newObj = this.addPropertiesToObject(obj[propertyOfarrayObj]);
+      }
+      else if (propertyOfarrayObj === '_') {
+        console.log("Vlegov _", obj[propertyOfarrayObj]);
+
+        objText = obj[propertyOfarrayObj];
+
+        console.log("newObj.text", newObj.text);
       }
       // Puts every other property in container (ex. body/items)
       else {
@@ -654,6 +665,9 @@ export class AppComponent implements OnInit {
     else {
       newObj.type = mainProperty;
     }
+    if(objText){
+      newObj.text = objText;
+    }
     if (newObj.body) {
       newObj.body = this.reconfigureJsonToNormal(newObj.body);
     }
@@ -666,6 +680,8 @@ export class AppComponent implements OnInit {
     else if (newObj.columns) {
       newObj.columns = this.reconfigureJsonToNormal(newObj.columns);
     }
+    console.log('newObj', newObj);
+    
     return newObj;
   }
 }
