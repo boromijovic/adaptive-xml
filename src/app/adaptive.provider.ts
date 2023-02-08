@@ -480,7 +480,7 @@ export class AdaptiveProvider {
         const search = '<Column ';
         const count = this.getOccurrences(this.card, search) + 1;
         childrenOfElement = `  
-  <Column Id="${AdaptiveProvider.generateId(elemName)}"  Width="stretch">
+  <Column Id="${AdaptiveProvider.generateId("Column")}"  Width="stretch">
   </Column>
 `;
         break;
